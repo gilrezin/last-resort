@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     private float rotationSpeed = -240.0f;
     private float launchForce = 200.0f;
     private float launchCooldown = 0.25f;
+    private float touchX;
+    private float touchY;
     private bool canLaunch = true;
     public bool playerAlive = true;
     public bool wonGame = false;
@@ -17,23 +19,35 @@ public class PlayerController : MonoBehaviour
     public AudioClip deathSound;
     public ParticleSystem explosionParticle;
     public ParticleSystem boostParticle;
+    public AudioReverbFilter reverb;
     // Start is called before the first frame update
     void Start()
     {
         gameObject.SetActive(true);
         playerRb = GetComponent<Rigidbody2D>();
         playerAudio = GetComponent<AudioSource>();
+        reverb = GameObject.Find("Main Camera").GetComponent<AudioReverbFilter>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!gameStarted && Input.GetKeyDown(KeyCode.Space)) 
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            touchX = touch.position.x;
+            touchY = touch.position.y;
+            //Debug.Log("x: " + touchX + "\ty: " + touchY);
+        }   
+        if (!gameStarted && (Input.GetKey(KeyCode.Space)) || (Input.touchCount > 0 && touchX > Globals.MENU_BUTTON_BOUNDS && touchY > Globals.MENU_BUTTON_BOUNDS))
         {
             gameStarted = true;
         }
         MovePlayer();
         winCondition();
+        float reverbLevel = Mathf.Max(Mathf.Abs(transform.position.x), Mathf.Abs(transform.position.y)) * 44 - 10250; // reverb increases as player nears edge of level
+        reverb.reverbLevel = reverbLevel;
     }
 
     // provides a cooldown for the launch function, prevents spamming
@@ -51,7 +65,7 @@ public class PlayerController : MonoBehaviour
         if (gameStarted) {
         transform.Rotate(transform.forward, Time.deltaTime * rotationSpeed);
 
-           if (Input.GetKeyDown(KeyCode.Space) && canLaunch)
+           if ((Input.GetKey(KeyCode.Space) || Input.touchCount > 0) && canLaunch)
             {
             boostParticle.Play();
             playerRb.AddForce(transform.up * launchForce, ForceMode2D.Force);
@@ -63,7 +77,7 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.Delete)) // delete all save data shortcut
             {
-                PlayerPrefs.DeleteKey("BestTime");
+                PlayerPrefs.DeleteAll();
                 Debug.Log("save data deleted");
             }
         }

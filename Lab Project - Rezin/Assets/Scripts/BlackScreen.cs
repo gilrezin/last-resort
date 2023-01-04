@@ -24,6 +24,7 @@ public class BlackScreen : MonoBehaviour
     public AudioSource music;
     public AudioClip successSound;
     Stopwatch stopWatch = new Stopwatch();
+    public GameObject canvas;
     // Start is called before the first frame update
 
     void Start()
@@ -42,7 +43,7 @@ public class BlackScreen : MonoBehaviour
         endOfGameTasksRun = false;
         playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
         this.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0);
-
+        music.volume = 0.1f;
     }
 
     // Update is called once per frame
@@ -72,6 +73,11 @@ public class BlackScreen : MonoBehaviour
             music.Play();
             startOfGameTasksRun = true;
         }
+
+        if (Screen.width > Screen.height)
+            canvas.GetComponent<CanvasScaler>().referenceResolution = new Vector2(960, 600);
+        else if (Screen.width < Screen.height)
+            canvas.GetComponent<CanvasScaler>().referenceResolution = new Vector2(600, 960);
     }
 
     public IEnumerator FadeBlackOutSquare(float fadeSpeed = 0.25f)

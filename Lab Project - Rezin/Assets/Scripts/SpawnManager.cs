@@ -21,7 +21,7 @@ public class SpawnManager : MonoBehaviour
     void Start()
     {
         string asteroidLayout = "";
-        for (int y = -250; y <= 250; y += 10) // i represents the y-coordinate, j represents the x-coordinate
+        for (int y = -250; y <= 250; y += 10)
         {
             for (int x = -250; x <= 250; x += 10)
             {
@@ -62,7 +62,7 @@ public class SpawnManager : MonoBehaviour
         minXSpawnBound = player.transform.position.x - spawnBound;
         maxYSpawnBound = player.transform.position.y + spawnBound;
         minYSpawnBound = player.transform.position.y - spawnBound;
-        for (int y = (int) minYSpawnBound; y < maxYSpawnBound; y += 10) // i represents the y-coordinate, j represents the x-coordinate
+        for (int y = (int) minYSpawnBound; y < maxYSpawnBound; y += 10)
         {
             for (int x = (int) minXSpawnBound; x < maxXSpawnBound; x += 10)
             {
